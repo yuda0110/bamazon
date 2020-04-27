@@ -10,12 +10,20 @@ const connection = mysql.createConnection({
   database: 'bamazon'
 });
 
+connection.connect((err) => {
+  if (err) {
+    throw err;
+  }
+
+  purchaseProduct();
+});
+
 const showAllProducts = (res) => {
   console.log('------ List of Products ------');
   for (const product of res) {
     console.log(`${product.item_id}. ${product.product_name} - $${product.price}`);
   }
-  console.log('\n');
+  console.log('------------------------------\n');
 }
 
 const purchaseProduct = () => {
@@ -30,7 +38,7 @@ const purchaseProduct = () => {
       {
         name: 'id',
         type: 'integer',
-        message: 'Please select the ID of the product you would like to buy.',
+        message: 'Please type in the ID of the product you would like to buy.',
         validate: (input) => {
           const idArr = [];
           for (const product of res) {
@@ -42,9 +50,57 @@ const purchaseProduct = () => {
             return 'There is no product which matches the ID you entered. Please type in a different ID.';
           }
         }
+      },
+      {
+        name: 'quantity',
+        type: 'integer',
+        message: 'How many units of the product would you like to buy?',
+        validate: (input) => {
+          if (Number.isFinite(Number.parseInt(input)) && input.match(/^[0-9]+$/)) {
+            return true;
+          } else {
+            return 'Please type in only a number.'
+          }
+        }
       }
     ]).then((answer) => {
-      console.log('Selected ID: ' + answer.id);
+      const chosenItemId = parseInt(answer.id);
+      const chosenQuantity = parseInt(answer.quantity);
+      console.log('Selected ID: ' + chosenItemId);
+
+      let chosenItem;
+
+      for (const product of res) {
+        if (product.item_id === chosenItemId) {
+          chosenItem = product;
+        }
+      }
+
+      // Check if your store has enough of the product to meet the customer's request.
+      if (chosenItem.stock_quantity < chosenQuantity) {
+        console.log('Sorry, there is not enough stock for your order.');
+        // purchaseProduct();
+      } else {
+        console.log('updating the SQL database to reflect the remaining quantity.');
+
+        connection.query(
+          'UPDATE products SET ? WHERE ?',
+          [
+              {stock_quantity: chosenItem.stock_quantity - chosenQuantity},
+              {item_id: chosenItemId}
+            ],
+            (err, res) => {
+              if (err) {
+                throw err;
+              }
+
+              console.log(`The total cost: $${chosenItem.price * chosenQuantity}`);
+            }
+          )
+        // connection.end();
+
+        // Once the update goes through, show the customer the total cost of their purchase.
+      }
     }).catch(error => {
       if (error.isTtyError) {
         // Prompt couldn't be rendered in the current environment
@@ -55,10 +111,6 @@ const purchaseProduct = () => {
         console.log(error);
       }
     });
-
   })
-  connection.end();
+  // connection.end();
 }
-
-// showAllProducts();
-purchaseProduct();
