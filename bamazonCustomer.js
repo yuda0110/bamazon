@@ -78,8 +78,8 @@ const purchaseProduct = () => {
 
       // Check if your store has enough of the product to meet the customer's request.
       if (chosenItem.stock_quantity < chosenQuantity) {
-        console.log('Sorry, there is not enough stock for your order.');
-        // purchaseProduct();
+        console.log('Sorry, there is not enough stock for your order.\n\n');
+        purchaseProduct();
       } else {
         console.log('updating the SQL database to reflect the remaining quantity.');
 
@@ -93,14 +93,12 @@ const purchaseProduct = () => {
               if (err) {
                 throw err;
               }
-
+              // Once the update goes through, show the customer the total cost of their purchase.
               console.log(`The total cost: $${chosenItem.price * chosenQuantity}`);
             }
           )
-        // connection.end();
-
-        // Once the update goes through, show the customer the total cost of their purchase.
       }
+      connection.end();
     }).catch(error => {
       if (error.isTtyError) {
         // Prompt couldn't be rendered in the current environment
@@ -112,5 +110,4 @@ const purchaseProduct = () => {
       }
     });
   })
-  // connection.end();
 }
