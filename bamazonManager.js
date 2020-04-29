@@ -11,13 +11,35 @@ const connection = mysql.createConnection({
 });
 
 
-const viewProductsForSale = () => {
+const showAllProducts = (res, listName) => {
+  console.log(`\n------ List of ${listName} ------\n`);
+  for (const product of res) {
+    console.log(`${product.item_id}. ${product.product_name} - $${product.price} - ${product.stock_quantity} items`);
+  }
+  console.log('\n------------------------------\n');
+}
 
+const viewProductsForSale = () => {
+  connection.query('SELECT * FROM products', (err, res) => {
+    if (err) {
+      throw err;
+    }
+
+    showAllProducts(res, 'All Items');
+  })
+  connection.end();
 };
 
 
 const viewLowInventory = () => {
+  connection.query('SELECT * FROM products WHERE stock_quantity < ?', [5], (err, res) => {
+    if (err) {
+      throw err;
+    }
 
+    showAllProducts(res, 'Items Low in Stock');
+  })
+  connection.end();
 };
 
 
