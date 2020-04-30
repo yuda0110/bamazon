@@ -44,7 +44,70 @@ const viewLowInventory = () => {
 
 
 const addToInventory = () => {
+  connection.query('SELECT * FROM products', (err, res) => {
+    if (err) {
+      throw err;
+    }
 
+    inquirer
+      .prompt([
+        {
+          name: 'id',
+          type: 'integer',
+          message: 'Please type in the ID of the item you would like to add more.',
+          validate: (input) => {
+            const idArr = [];
+            for (const product of res) {
+              idArr.push(product.item_id);
+            }
+            if (idArr.includes(parseInt(input))) {
+              return true;
+            } else {
+              return 'There is no item which matches the ID you entered. Please type in a different ID.';
+            }
+          }
+        },
+        {
+          name: 'quantity',
+          type: 'integer',
+          message: 'How many more would you like to add?',
+          validate: (input) => {
+            if (Number.isFinite(Number.parseInt(input)) && input.match(/^[0-9]+$/)) {
+              return true;
+            } else {
+              return 'Please type in only a number.'
+            }
+          }
+        }
+      ]).then((answer) => {
+        const chosenItemId = parseInt(answer.id);
+        const chosenQuantity = parseInt(answer.quantity);
+
+        let chosenItem;
+
+        for (const product of res) {
+          if (product.item_id === chosenItemId) {
+            chosenItem = product;
+          }
+        }
+
+        connection.query(
+          'UPDATE products SET ? WHERE ?',
+          [
+            {stock_quantity: chosenItem.stock_quantity + chosenQuantity},
+            {item_id: chosenItemId}
+          ],
+          (err, res) => {
+            if (err) {
+              throw err;
+            }
+            console.log('Update successful!!!');
+            console.log(`The quantity of ${chosenItem.product_name} (ID: ${chosenItemId}) is updated to ${chosenItem.stock_quantity + chosenQuantity} now.`);
+          }
+        )
+        connection.end();
+    })
+  })
 };
 
 
