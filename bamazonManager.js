@@ -173,7 +173,30 @@ const addNewProduct = () => {
       }
     }
   ]).then((answers) => {
-    console.log(`${answers.product_name} - ${answers.department} - $${answers.price} - ${answers.stock_quantity} items`)
+    const productName = answers.product_name;
+    const departmentName = answers.department;
+    const price = answers.price;
+    const quantity = answers.stock_quantity;
+
+    connection.query(
+      'INSERT INTO products SET ?',
+      {
+        product_name: productName,
+        department_name: departmentName,
+        price: price,
+        stock_quantity: quantity
+      },
+      (err) => {
+        if (err) {
+          throw err;
+        }
+        console.log('\nA new product was added successfully!!!\n');
+        console.log('------- Added Item Information -------\n');
+        console.log(`Product Name: ${productName}\nDepartment Name: ${departmentName}\nPrice: $${price}\nStock Quantity: ${quantity}\n`);
+        console.log('--------------------------------------\n');
+      }
+    )
+    connection.end();
   }).catch(error => {
     if (error.isTtyError) {
       // Prompt couldn't be rendered in the current environment
