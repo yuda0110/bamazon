@@ -81,12 +81,13 @@ const purchaseProduct = () => {
         console.log('Sorry, there is not enough stock for your order.\n\n');
         purchaseProduct();
       } else {
-        console.log('updating the SQL database to reflect the remaining quantity.');
-
         connection.query(
           'UPDATE products SET ? WHERE ?',
           [
-              {stock_quantity: chosenItem.stock_quantity - chosenQuantity},
+              {
+                stock_quantity: chosenItem.stock_quantity - chosenQuantity,
+                product_sales: chosenItem.product_sales + chosenItem.price * chosenQuantity
+              },
               {item_id: chosenItemId}
             ],
             (err, res) => {
@@ -95,6 +96,8 @@ const purchaseProduct = () => {
               }
               // Once the update goes through, show the customer the total cost of their purchase.
               console.log(`The total cost: $${chosenItem.price * chosenQuantity}`);
+              // console.log(`The product sales BEFORE: $${chosenItem.product_sales}`);
+              // console.log(`The product sales AFTER: $${chosenItem.product_sales + chosenItem.price * chosenQuantity}`);
             }
           )
       }
