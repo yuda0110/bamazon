@@ -53,7 +53,7 @@ const addToInventory = () => {
       .prompt([
         {
           name: 'id',
-          type: 'integer',
+          type: 'input',
           message: 'Please type in the ID of the item you would like to add more.',
           validate: (input) => {
             const idArr = [];
@@ -69,13 +69,13 @@ const addToInventory = () => {
         },
         {
           name: 'quantity',
-          type: 'integer',
+          type: 'input',
           message: 'How many more would you like to add?',
           validate: (input) => {
             if (Number.isFinite(Number.parseInt(input)) && input.match(/^[0-9]+$/)) {
               return true;
             } else {
-              return 'Please type in only a number.'
+              return 'Please type in only numbers.'
             }
           }
         }
@@ -121,7 +121,69 @@ const addToInventory = () => {
 
 
 const addNewProduct = () => {
+  console.log('Please enter the new product information you would like to add.\n');
 
+  inquirer.prompt([
+    {
+      name: 'product_name',
+      type: 'input',
+      message: 'Product Name: ',
+      validate: (input) => {
+        if (input.trim().length > 0) {
+          return true;
+        } else {
+          return 'Please enter a product name.'
+        }
+      }
+    },
+    {
+      name: 'department',
+      type: 'input',
+      message: 'Department name: ',
+      validate: (input) => {
+        if (input.trim().length > 0) {
+          return true;
+        } else {
+          return 'Please enter a department name.'
+        }
+      }
+    },
+    {
+      name: 'price',
+      type: 'input',
+      message: 'Price: ',
+      validate: (input) => {
+        if (input.match(/^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$/)) {
+          return true;
+        } else {
+          return 'Invalid input for price.'
+        }
+      }
+    },
+    {
+      name: 'stock_quantity',
+      type: 'input',
+      message: 'Stock quantity: ',
+      validate: (input) => {
+        if (Number.isFinite(Number.parseInt(input)) && input.match(/^[0-9]+$/)) {
+          return true;
+        } else {
+          return 'Please type in only numbers.';
+        }
+      }
+    }
+  ]).then((answers) => {
+    console.log(`${answers.product_name} - ${answers.department} - $${answers.price} - ${answers.stock_quantity} items`)
+  }).catch(error => {
+    if (error.isTtyError) {
+      // Prompt couldn't be rendered in the current environment
+      console.log('TtyError: ');
+      console.log(error);
+    } else {
+      // Something else when wrong
+      console.log(error);
+    }
+  });
 };
 
 

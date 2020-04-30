@@ -37,7 +37,7 @@ const purchaseProduct = () => {
     inquirer.prompt([
       {
         name: 'id',
-        type: 'integer',
+        type: 'number',
         message: 'Please type in the ID of the product you would like to buy.',
         validate: (input) => {
           const idArr = [];
@@ -53,10 +53,10 @@ const purchaseProduct = () => {
       },
       {
         name: 'quantity',
-        type: 'integer',
+        type: 'input',
         message: 'How many units of the product would you like to buy?',
         validate: (input) => {
-          if (Number.isFinite(Number.parseInt(input)) && input.match(/^[0-9]+$/)) {
+          if (isNaN(input) === false) {
             return true;
           } else {
             return 'Please type in only a number.'
