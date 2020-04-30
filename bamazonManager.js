@@ -106,7 +106,16 @@ const addToInventory = () => {
           }
         )
         connection.end();
-    })
+    }).catch(error => {
+      if (error.isTtyError) {
+        // Prompt couldn't be rendered in the current environment
+        console.log('TtyError: ');
+        console.log(error);
+      } else {
+        // Something else when wrong
+        console.log(error);
+      }
+    });
   })
 };
 
