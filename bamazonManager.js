@@ -123,90 +123,100 @@ const addToInventory = () => {
 const addNewProduct = () => {
   console.log('Please enter the new product information you would like to add.\n');
 
-  inquirer.prompt([
-    {
-      name: 'product_name',
-      type: 'input',
-      message: 'Product Name: ',
-      validate: (input) => {
-        if (input.trim().length > 0) {
-          return true;
-        } else {
-          return 'Please enter a product name.'
-        }
-      }
-    },
-    {
-      name: 'department',
-      type: 'input',
-      message: 'Department name: ',
-      validate: (input) => {
-        if (input.trim().length > 0) {
-          return true;
-        } else {
-          return 'Please enter a department name.'
-        }
-      }
-    },
-    {
-      name: 'price',
-      type: 'input',
-      message: 'Price: ',
-      validate: (input) => {
-        if (input.match(/^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$/)) {
-          return true;
-        } else {
-          return 'Invalid input for price.'
-        }
-      }
-    },
-    {
-      name: 'stock_quantity',
-      type: 'input',
-      message: 'Stock quantity: ',
-      validate: (input) => {
-        if (Number.isFinite(Number.parseInt(input)) && input.match(/^[0-9]+$/)) {
-          return true;
-        } else {
-          return 'Please type in only numbers.';
-        }
-      }
+  connection.query('SELECT department_id FROM departments', (err, res) => {
+    if (err) {
+      throw err;
     }
-  ]).then((answers) => {
-    const productName = answers.product_name;
-    const departmentName = answers.department;
-    const price = answers.price;
-    const quantity = answers.stock_quantity;
 
-    connection.query(
-      'INSERT INTO products SET ?',
+    inquirer.prompt([
       {
-        product_name: productName,
-        department_name: departmentName,
-        price: price,
-        stock_quantity: quantity
-      },
-      (err) => {
-        if (err) {
-          throw err;
+        name: 'product_name',
+        type: 'input',
+        message: 'Product Name: ',
+        validate: (input) => {
+          if (input.trim().length > 0) {
+            return true;
+          } else {
+            return 'Please enter a product name.'
+          }
         }
-        console.log('\nA new product was added successfully!!!\n');
-        console.log('------- Added Item Information -------\n');
-        console.log(`Product Name: ${productName}\nDepartment Name: ${departmentName}\nPrice: $${price}\nStock Quantity: ${quantity}\n`);
-        console.log('--------------------------------------\n');
+      },
+      {
+        name: 'department',
+        type: 'input',
+        message: 'Department ID: ',
+        validate: (input) => {
+          const idArr = [];
+          for (const department of res) {
+            idArr.push(department.department_id);
+          }
+          if (idArr.includes(parseInt(input))) {
+            return true;
+          } else {
+            return 'There is no department which matches the ID you entered. Please type in a different ID.';
+          }
+        }
+      },
+      {
+        name: 'price',
+        type: 'input',
+        message: 'Price: ',
+        validate: (input) => {
+          if (input.match(/^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$/)) {
+            return true;
+          } else {
+            return 'Invalid input for price.'
+          }
+        }
+      },
+      {
+        name: 'stock_quantity',
+        type: 'input',
+        message: 'Stock quantity: ',
+        validate: (input) => {
+          if (Number.isFinite(Number.parseInt(input)) && input.match(/^[0-9]+$/)) {
+            return true;
+          } else {
+            return 'Please type in only numbers.';
+          }
+        }
       }
-    )
-    connection.end();
-  }).catch(error => {
-    if (error.isTtyError) {
-      // Prompt couldn't be rendered in the current environment
-      console.log('TtyError: ');
-      console.log(error);
-    } else {
-      // Something else when wrong
-      console.log(error);
-    }
-  });
+    ]).then((answers) => {
+      const productName = answers.product_name;
+      const departmentID = answers.department;
+      const price = answers.price;
+      const quantity = answers.stock_quantity;
+
+      connection.query(
+        'INSERT INTO products SET ?',
+        {
+          product_name: productName,
+          department_id: departmentID,
+          price: price,
+          stock_quantity: quantity
+        },
+        (err) => {
+          if (err) {
+            throw err;
+          }
+          console.log('\nA new product was added successfully!!!\n');
+          console.log('------- Added Item Information -------\n');
+          console.log(`Product Name: ${productName}\nDepartment ID: ${departmentID}\nPrice: $${price}\nStock Quantity: ${quantity}\n`);
+          console.log('--------------------------------------\n');
+        }
+      )
+      connection.end();
+    }).catch(error => {
+      if (error.isTtyError) {
+        // Prompt couldn't be rendered in the current environment
+        console.log('TtyError: ');
+        console.log(error);
+      } else {
+        // Something else when wrong
+        console.log(error);
+      }
+    });
+  })
 };
 
 

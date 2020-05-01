@@ -35,6 +35,19 @@ CREATE TABLE departments (
                              PRIMARY KEY (department_id)
 );
 
+INSERT INTO departments (department_name, over_head_costs)
+VALUES
+('Appliances', 1000),
+('Baby', 800),
+('Beauty and Personal Care', 500),
+('Electronics', 500),
+('Grocery', 2000),
+('Home and Kitchen', 400),
+('Apps and Games', 200),
+('Fashion', 2000),
+('Sports and Outdoors', 700),
+('Tools and Home Improvements', 600);
+
 
 SELECT * FROM products;
 
