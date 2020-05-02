@@ -16,9 +16,9 @@ const ViewProductSalesByDepartment = () => {
   // query += 'FROM departments AS d LEFT JOIN products AS p ON d.department_id = p.department_id ';
   // query += 'GROUP BY d.department_id '
   // query += 'ORDER BY d.department_id';
-  let query = 'SELECT d.department_id, d.department_name, d.over_head_costs, SUM(p.product_sales) AS product_sales, product_sales - d.over_head_costs AS total_profit ';
+  let query = 'SELECT d.department_id, d.department_name, d.over_head_costs, SUM(p.product_sales) AS total_product_sales, SUM(p.product_sales) - d.over_head_costs AS total_profit ';
   query += 'FROM departments AS d LEFT JOIN products AS p ON d.department_id = p.department_id ';
-  query += 'GROUP BY d.department_id, product_sales, total_profit '
+  query += 'GROUP BY d.department_id '
   query += 'ORDER BY d.department_id';
 
   connection.query(query, (err, res) => {
@@ -26,9 +26,11 @@ const ViewProductSalesByDepartment = () => {
       throw err
     }
 
-    for (const row of res) {
-      console.log(`${row.department_id} | ${row.department_name} | ${row.over_head_costs} | ${row.product_sales} | ${row.total_profit}`)
-    }
+    console.table(res);
+
+    // for (const row of res) {
+    //   console.log(`${row.department_id} | ${row.department_name} | ${row.over_head_costs} | ${row.product_sales} | ${row.total_profit}`)
+    // }
   })
   connection.end();
 };
