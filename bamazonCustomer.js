@@ -1,20 +1,23 @@
 const mysql = require('mysql');
 const inquirer = require('inquirer');
+const connection = require('./mysqlConnection');
+
 
 // Create the connection information for the sql database
-const connection = mysql.createConnection({
-  host: 'localhost',
-  port: 3306,
-  user: 'root',
-  password: '',
-  database: 'bamazon'
-});
+// const connection = mysql.createConnection({
+//   host: 'localhost',
+//   port: 3306,
+//   user: 'root',
+//   password: '',
+//   database: 'bamazon'
+// });
 
 connection.connect((err) => {
   if (err) {
     throw err;
   }
 
+  console.log('connected!');
   purchaseProduct();
 });
 

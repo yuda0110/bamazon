@@ -1,8 +1,7 @@
 const mysql = require('mysql');
 
 // Create the connection information for the sql database
-const connection = function() {
-  return
+const connection =
     mysql.createConnection({
       host: 'localhost',
       port: 3306,
@@ -10,6 +9,6 @@ const connection = function() {
       password: '',
       database: 'bamazon'
     });
-};
+
 
 module.exports = connection;
