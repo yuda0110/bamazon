@@ -25,7 +25,64 @@ const ViewProductSalesByDepartment = () => {
 
 
 const createNewDepartment = () => {
+  console.log('Please enter the new department information you would like to create.\n');
 
+  inquirer.prompt([
+    {
+      name: 'departmentName',
+      type: 'input',
+      message: 'Department Name: ',
+      validate: (input) => {
+        if (input.trim().length > 0) {
+          return true;
+        } else {
+          return 'Please enter a department name.'
+        }
+      }
+    },
+    {
+      name: 'overHeadCosts',
+      type: 'input',
+      message: 'Over Head Costs: ',
+      validate: (input) => {
+        if (input.match(/^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$/)) {
+          return true;
+        } else {
+          return 'Invalid input for over head costs.'
+        }
+      }
+    }
+  ]).then((answers) => {
+    const departmentName = answers.departmentName;
+    const overHeadCosts = answers.overHeadCosts;
+
+    connection.query(
+      'INSERT INTO departments SET ?',
+      {
+        department_name: departmentName,
+        over_head_costs: overHeadCosts
+      },
+      (err) => {
+        if (err) {
+          throw err;
+        }
+        console.log('\nA new department was created successfully!!!\n');
+        console.log('------- Created Department Information -------\n');
+        console.log(`Department Name: ${departmentName}\nOver Head Costs: $${overHeadCosts}\n`);
+        console.log('--------------------------------------\n');
+      }
+    )
+    connection.end();
+  }).catch(error => {
+    if (error.isTtyError) {
+      // Prompt couldn't be rendered in the current environment
+      console.log('TtyError: ');
+      console.log(error);
+    } else {
+      // Something else when wrong
+      console.log(error);
+    }
+  });
 };
 
 
