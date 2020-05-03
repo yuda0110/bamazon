@@ -14,6 +14,7 @@
   "author": "Yuko Uda",
   "license": "ISC",
   "dependencies": {
+    "console-table-printer": "^1.4.9",
     "inquirer": "^7.1.0",
     "mysql": "^2.18.1"
   }

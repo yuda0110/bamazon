@@ -1,6 +1,6 @@
-const mysql = require('mysql');
 const inquirer = require('inquirer');
 const connection = require('./mysqlConnection');
+const { printTable } = require('console-table-printer');
 
 
 const ViewProductSalesByDepartment = () => {
@@ -14,7 +14,7 @@ const ViewProductSalesByDepartment = () => {
       throw err
     }
 
-    console.table(res);
+    printTable(res);
 
     // for (const row of res) {
     //   console.log(`${row.department_id} | ${row.department_name} | ${row.over_head_costs} | ${row.product_sales} | ${row.total_profit}`)
