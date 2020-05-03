@@ -72,7 +72,6 @@ const purchaseProduct = () => {
       // Check if your store has enough of the product to meet the customer's request.
       if (chosenItem.stock_quantity < chosenQuantity) {
         console.log('Sorry, there is not enough stock for your order.\n\n');
-        purchaseProduct();
       } else {
         connection.query(
           'UPDATE products SET ? WHERE ?',
@@ -89,8 +88,6 @@ const purchaseProduct = () => {
               }
               // Once the update goes through, show the customer the total cost of their purchase.
               console.log(`The total cost: $${chosenItem.price * chosenQuantity}`);
-              // console.log(`The product sales BEFORE: $${chosenItem.product_sales}`);
-              // console.log(`The product sales AFTER: $${chosenItem.product_sales + chosenItem.price * chosenQuantity}`);
             }
           )
       }

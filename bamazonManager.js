@@ -153,7 +153,7 @@ const addNewProduct = () => {
         type: 'input',
         message: 'Price: ',
         validate: (input) => {
-          if (input.match(/^\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$/)) {
+          if (input.match(/^\d*(.[0-9][0-9])?$/)) {
             return true;
           } else {
             return 'Invalid input for price.'
