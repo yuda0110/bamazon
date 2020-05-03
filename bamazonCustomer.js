@@ -7,7 +7,6 @@ connection.connect((err) => {
     throw err;
   }
 
-  console.log('connected!');
   purchaseProduct();
 });
 
